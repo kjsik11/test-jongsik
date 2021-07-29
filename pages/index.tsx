@@ -2,30 +2,105 @@
  * @template PageComponent
  */
 
+import { Button } from '@components/ui';
+import { fetcher } from '@lib/fetcher';
 import React, { useState } from 'react';
-import SyntaxHighlighter from 'react-syntax-highlighter';
-import { docco } from 'react-syntax-highlighter/dist/cjs/styles/hljs';
 
 export default function IndexPage() {
-  const codeString = `
-  Example 2: Generate random number between two numbers
-  // generating random number in range [x, y)
-  function getRandomNum(min, max) {
-    return Math.random() * (max - min) + min;
-  }
-  
-  // random number in range 5(inclusive) and 10(exclusive)
-  var random_num = getRandomNum(5, 10);
-  console.log(random_num);
-  
-  // random number in range 0(inclusive) and 100(exclusive)
-  var random_num = getRandomNum(0, 100);
-  console.log(random_num);`;
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [birth, setBirth] = useState('');
+  const [name, setName] = useState('');
+
   return (
-    <div>
-      <SyntaxHighlighter language="python" style={docco} error={false}>
-        {codeString}
-      </SyntaxHighlighter>
+    <div className="pt-8 mx-auto max-w-3xl">
+      <div className="flex space-x-2 items-center">
+        <label>username</label>
+        <input
+          className="border-4"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+        />
+      </div>
+      <div className="flex space-x-2 items-center">
+        <label>password</label>
+        <input
+          className="border-4"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+      </div>
+      <div className="flex space-x-2 items-center">
+        <label>name</label>
+        <input className="border-4" value={name} onChange={(e) => setName(e.target.value)} />
+      </div>
+      <div className="flex space-x-2 items-center">
+        <label>birth</label>
+        <input className="border-4" value={birth} onChange={(e) => setBirth(e.target.value)} />
+      </div>
+      <Button
+        onClick={async () => {
+          try {
+            const response = await fetcher('https://backend-js.jongsik.site/api/auth', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ username, birth, name, password }),
+            }).then((res) => console.log(res));
+          } catch (err) {
+            console.log('fetcherror', err.message);
+          }
+        }}
+      >
+        submit
+      </Button>
+      <div className="flex space-x-2 items-center">
+        <label>username</label>
+        <input
+          className="border-4"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+        />
+      </div>
+      <div className="flex space-x-2 items-center">
+        <label>password</label>
+        <input
+          className="border-4"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+      </div>
+      <Button
+        onClick={async () => {
+          try {
+            await fetcher('https://backend-js.jongsik.site/api/auth/user', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ username, password }),
+            }).then((res) => console.log(res));
+          } catch (err) {
+            console.log('fetcherror', err.message);
+          }
+        }}
+      >
+        submit
+      </Button>
+      <Button
+        onClick={async () => {
+          try {
+            await fetcher('https://backend-js.jongsik.site/api/auth/user').then((res) =>
+              console.log(res),
+            );
+          } catch (err) {
+            console.log('fetcherror', err.message);
+          }
+        }}
+      >
+        get
+      </Button>
     </div>
   );
 }
